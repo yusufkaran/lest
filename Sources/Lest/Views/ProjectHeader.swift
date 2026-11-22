@@ -26,12 +26,12 @@ struct ProjectHeader: View {
         .accessibilityAddTraits(.isHeader)
         .contextMenu {
             Button("Open Folder in Finder", action: openFolder)
-                .disabled(group.path == nil)
+                .disabled(group.path.flatMap(ProjectFolder.revealable) == nil)
         }
     }
 
     private func openFolder() {
         guard let path = group.path else { return }
-        NSWorkspace.shared.open(URL(filePath: path, directoryHint: .isDirectory))
+        ProjectFolder.reveal(path)
     }
 }
