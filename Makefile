@@ -3,8 +3,9 @@ BUNDLE := build/$(APP).app
 INSTALLED := /Applications/$(APP).app
 # Where the `lest` command is linked. The folder has to be on your PATH.
 COMMAND := $(HOME)/.local/bin/lest
-VERSION := $(shell /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Resources/Info.plist)
-ARCHIVE := build/$(APP)-$(VERSION).zip
+# The download on the releases page. The name carries no version, so that
+# releases/latest/download/Lest.zip always points at the newest one.
+ARCHIVE := build/$(APP).zip
 # Extra `swift build` flags; `release` uses them to build for Intel and Apple silicon at once.
 BUILD_FLAGS :=
 

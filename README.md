@@ -19,12 +19,38 @@ keeps those notes in the menu bar, each with the project it was written for. The
   list down to one project.
 - Notes are stored as written, in whatever language you write them.
 
-## Requirements
-
-- macOS 14 or later
-- Xcode 16 or later to build it (Swift 6)
-
 ## Install
+
+Lest needs macOS 14 or later and runs on Apple silicon and Intel Macs.
+
+1. Download [Lest.zip](https://github.com/yusufkaran/lest/releases/latest/download/Lest.zip),
+   unzip it and move `Lest.app` into your Applications folder. The app is signed and notarized.
+2. Open Lest. It appears in the menu bar and adds itself to your login items; you can turn that
+   off in the panel's ⋯ menu.
+3. Put the `lest` command on your `PATH` and connect your coding tools:
+
+```bash
+sudo mkdir -p /usr/local/bin
+sudo ln -sf /Applications/Lest.app/Contents/MacOS/Lest /usr/local/bin/lest
+lest setup
+```
+
+The app's executable doubles as the command, so the link is all it takes. Any folder on your
+`PATH` works in place of `/usr/local/bin`.
+
+To update, download the new version and replace the app. To uninstall:
+
+```bash
+lest setup --remove                       # remove the files written for the coding tools
+pkill -x Lest
+sudo rm /usr/local/bin/lest
+rm -r /Applications/Lest.app
+rm -r ~/Library/Application\ Support/Lest   # your notes; skip this to keep them
+```
+
+### Build from source
+
+With Xcode 16 or later (Swift 6):
 
 ```bash
 git clone https://github.com/yusufkaran/lest.git
@@ -33,23 +59,12 @@ make install
 ```
 
 This builds the app and installs it as `/Applications/Lest.app`, links the `lest` command into
-`~/.local/bin`, connects the coding tools it finds on this Mac, and opens the app. On first
-launch the app adds itself to your login items; you can turn that off in the panel's ⋯ menu.
-
+`~/.local/bin`, connects the coding tools it finds on this Mac, and opens the app.
 `~/.local/bin` has to be on your `PATH` for the coding tools to find `lest`; the install tells
-you when it is not. To link the command into another folder on your `PATH` instead:
+you when it is not. To link the command into another folder instead:
 
 ```bash
 make install COMMAND=/usr/local/bin/lest
-```
-
-To update, pull and run `make install` again. To uninstall:
-
-```bash
-lest setup --remove                       # remove the files written for the coding tools
-pkill -x Lest
-rm -r /Applications/Lest.app ~/.local/bin/lest
-rm -r ~/Library/Application\ Support/Lest   # your notes; skip this to keep them
 ```
 
 ## Connecting coding tools
@@ -110,6 +125,7 @@ make snapshot   # draws the panel with sample notes into build/snapshots
 make icons      # compiles the SVG files in Resources/Phosphor into Swift
 make skill      # compiles skill/lest/SKILL.md into Swift
 make app-icon   # regenerates Resources/AppIcon.icns
+make release    # the signed, notarized download; see the Makefile for what it needs
 ```
 
 There are two ways to look at an interface change: `make snapshot` draws the panel off screen,
