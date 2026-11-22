@@ -1,23 +1,41 @@
-# Lest
+# Lest — “lest I forget”
 
-A small macOS menu bar app for the things you tell an AI coding agent to do later. Across many
-projects and many conversations, "let's not forget this" is easy to say and easy to lose; Lest
-keeps those notes in the menu bar, each with the project it was written for. The name is from
-"lest I forget".
+**A macOS menu bar to-do list for Claude Code and Codex.** Tell your AI coding agent "don't
+forget this" and the note stays in your menu bar, filed under the project you were working on,
+until you tick it off.
+
+> **lest** *(conjunction)*: for fear that; so that something does not happen.
+> *"Write it down, lest you forget."*
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/panel-dark.png">
-  <img src="docs/panel-light.png" width="380" alt="The Lest panel in the menu bar: open notes grouped by project">
+  <img src="docs/panel-light.png" width="380" alt="Lest, a macOS menu bar to-do list: open notes grouped by project, added by Claude Code and Codex">
 </picture>
 
-- Click the menu bar icon to see your notes project by project; the number of open notes sits
-  next to the icon.
-- Tell Claude Code or Codex "don't forget this, add it to my to-do list" and the note is added
-  with the `lest` command and shows up in the app right away. The project is the folder (the
-  git repository) the command ran in.
-- Notes can be added, completed and deleted from the panel too. The chips at the top narrow the
-  list down to one project.
-- Notes are stored as written, in whatever language you write them.
+## Why
+
+The task list a coding agent keeps lasts for one session. The follow-ups you agree on along
+the way ("we should add a retry here later", "remind me to update the docs") end up scattered
+over dozens of conversations and projects, and get forgotten. Lest gives them one place that
+is always in sight: a persistent to-do list in the menu bar, shared by every project and every
+session.
+
+## Features
+
+- **Always in your menu bar.** Click the icon to see your notes project by project; the number
+  of open notes sits next to it.
+- **Your agent adds the notes.** Say "don't forget this, add it to my to-do list" to Claude Code
+  or Codex and the note is added with the `lest` command and shows up right away.
+- **Grouped by project.** The project is the folder (the git repository) the agent was working
+  in, so you always know what a note was about.
+- **Works from the panel and the terminal too.** Add, complete and delete notes by hand, or
+  script it with `lest add` and `lest list --json`.
+- **A native Mac app.** Written in Swift and SwiftUI, signed and notarized, for Apple silicon
+  and Intel.
+- **Local and private.** Your notes are one JSON file on your Mac. No account, no cloud;
+  nothing leaves your computer.
+- **Any language.** Notes are stored as you or your agent wrote them.
+- **Free and open source**, under the MIT license.
 
 ## Install
 
@@ -67,7 +85,7 @@ you when it is not. To link the command into another folder instead:
 make install COMMAND=/usr/local/bin/lest
 ```
 
-## Connecting coding tools
+## Connecting Claude Code and Codex
 
 ```bash
 lest setup                   # connect every tool found on this Mac
@@ -92,7 +110,9 @@ Claude Code asks before using a skill that carries permissions. Choose "don't as
 it first asks, or add `Skill(lest)` to your allow list, and it will not ask again. Codex reads
 its rules at startup, so restart sessions that were open when you connected it.
 
-For any other tool, the skill is in this repository: `skill/lest/SKILL.md`.
+Other tools that read skills from `~/.agents/skills`, such as Cursor, find the skill there once
+Codex is connected; they have not been tested with Lest. For anything else, the skill is in this
+repository: `skill/lest/SKILL.md`.
 
 ## The command
 
