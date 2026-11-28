@@ -29,4 +29,16 @@ final class FloatingPanel: NSPanel {
     override func cancelOperation(_ sender: Any?) {
         onCancel()
     }
+
+    /// With no text field focused, as on the completed notes page, Escape arrives here as a
+    /// plain key press instead of a cancel command.
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == Self.escapeKeyCode {
+            onCancel()
+        } else {
+            super.keyDown(with: event)
+        }
+    }
+
+    private static let escapeKeyCode: UInt16 = 53
 }

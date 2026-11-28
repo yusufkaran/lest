@@ -17,7 +17,7 @@ final class PanelController: NSObject, NSWindowDelegate {
             .modifier(PanelChrome())
         panel.contentView = NSHostingView(rootView: content)
         panel.delegate = self
-        panel.onCancel = { [weak self] in self?.hide() }
+        panel.onCancel = { [weak self] in self?.cancel() }
     }
 
     func toggle(below anchor: NSRect?) {
@@ -57,6 +57,16 @@ final class PanelController: NSObject, NSWindowDelegate {
         if let outsideClickMonitor { NSEvent.removeMonitor(outsideClickMonitor) }
         outsideClickMonitor = nil
         lastDismissal = .now
+        presentation.showsCompleted = false
+    }
+
+    /// Escape leaves the completed notes first, then closes the panel.
+    private func cancel() {
+        if presentation.showsCompleted {
+            presentation.showsCompleted = false
+        } else {
+            hide()
+        }
     }
 
     func windowDidResignKey(_ notification: Notification) {

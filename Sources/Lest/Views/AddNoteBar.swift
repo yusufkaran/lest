@@ -39,6 +39,8 @@ struct AddNoteBar: View {
         .padding(.vertical, Theme.rowPadding)
         .background(.quinary, in: .rect(cornerRadius: Theme.cardRadius))
         .onChange(of: presentation.count) { focusNote() }
+        // Coming back from the completed notes page rebuilds the bar.
+        .onAppear(perform: focusNote)
     }
 
     /// Opening the panel should be enough to start typing a note.

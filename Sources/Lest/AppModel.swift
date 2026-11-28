@@ -13,6 +13,7 @@ final class AppModel {
     var openCount: Int { groups.reduce(0) { $0 + $1.open.count } }
     var doneCount: Int { groups.reduce(0) { $0 + $1.done.count } }
     var projectNames: [String] { groups.map(\.name) }
+    var completedDays: [CompletedDay] { CompletedDay.grouping(groups.flatMap(\.done)) }
 
     init(store: NoteStore = .standard) {
         self.store = store

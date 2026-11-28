@@ -1,19 +1,19 @@
 import SwiftUI
 import LestCore
 
-/// The window that opens under the menu bar item.
+/// The window that opens under the menu bar item: the open notes, or the completed ones on a
+/// page of their own.
 struct NotesPanel: View {
     let model: AppModel
     let loginItem: LoginItem
     let presentation: PanelPresentation
 
-    @AppStorage("showsDone") private var showsDone = false
     @AppStorage("targetProject") private var targetProject = Note.defaultProject
     @State private var filter: String?
 
-    /// Projects that have something to show with the current "show done notes" setting.
+    /// Projects with open notes. Completed notes stay off this page.
     private var listedGroups: [ProjectGroup] {
-        model.groups.filter { showsDone || !$0.open.isEmpty }
+        model.groups.filter { !$0.open.isEmpty }
     }
 
     private var visibleGroups: [ProjectGroup] {
@@ -22,23 +22,11 @@ struct NotesPanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.blockSpacing) {
-            PanelHeader(model: model, loginItem: loginItem, showsDone: $showsDone)
-                .padding(.horizontal, Theme.padding)
-            if listedGroups.count > 1 {
-                ProjectFilterBar(groups: listedGroups, filter: $filter)
+            if presentation.showsCompleted {
+                completedPage
+            } else {
+                notesPage
             }
-            if let message = model.errorMessage ?? loginItem.errorMessage {
-                ErrorBanner(message: message)
-                    .padding(.horizontal, Theme.padding)
-            }
-            NoteList(groups: visibleGroups, showsDone: showsDone, hasAnyNotes: !model.groups.isEmpty, model: model)
-            AddNoteBar(
-                projects: model.projectNames,
-                project: $targetProject,
-                presentation: presentation,
-                onAdd: model.add
-            )
-            .padding(.horizontal, Theme.padding)
         }
         .padding(.vertical, Theme.padding)
         .frame(width: Theme.panelWidth)
@@ -47,6 +35,45 @@ struct NotesPanel: View {
         .onChange(of: loginItem.isEnabled) { loginItem.apply() }
         .onChange(of: filter) { addToFilteredProject() }
         .onChange(of: listedGroups.map(\.name)) { clearFilterIfProjectIsGone() }
+    }
+
+    @ViewBuilder private var notesPage: some View {
+        PanelHeader(model: model, loginItem: loginItem, onShowCompleted: showCompleted)
+            .padding(.horizontal, Theme.padding)
+        if listedGroups.count > 1 {
+            ProjectFilterBar(groups: listedGroups, filter: $filter)
+        }
+        errorBanner
+        NoteList(groups: visibleGroups, hasAnyNotes: !model.groups.isEmpty, model: model)
+        AddNoteBar(
+            projects: model.projectNames,
+            project: $targetProject,
+            presentation: presentation,
+            onAdd: model.add
+        )
+        .padding(.horizontal, Theme.padding)
+    }
+
+    @ViewBuilder private var completedPage: some View {
+        CompletedHeader(count: model.doneCount, onBack: showOpenNotes)
+            .padding(.horizontal, Theme.padding)
+        errorBanner
+        CompletedList(days: model.completedDays, model: model)
+    }
+
+    @ViewBuilder private var errorBanner: some View {
+        if let message = model.errorMessage ?? loginItem.errorMessage {
+            ErrorBanner(message: message)
+                .padding(.horizontal, Theme.padding)
+        }
+    }
+
+    private func showCompleted() {
+        presentation.showsCompleted = true
+    }
+
+    private func showOpenNotes() {
+        presentation.showsCompleted = false
     }
 
     /// While looking at one project, new notes should land in it.

@@ -7,6 +7,7 @@
 enum Phosphor: String, CaseIterable {
     case arrowUpBold = "arrow-up-bold"
     case caretDownBold = "caret-down-bold"
+    case caretLeftBold = "caret-left-bold"
     case checkBold = "check-bold"
     case checkCircleDuotone = "check-circle-duotone"
     case checkCircleFill = "check-circle-fill"
@@ -24,6 +25,8 @@ enum Phosphor: String, CaseIterable {
             #"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208.49,120.49a12,12,0,0,1-17,0L140,69V216a12,12,0,0,1-24,0V69L64.49,120.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0l72,72A12,12,0,0,1,208.49,120.49Z"/></svg>"#
         case .caretDownBold:
             #"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216.49,104.49l-80,80a12,12,0,0,1-17,0l-80-80a12,12,0,0,1,17-17L128,159l71.51-71.52a12,12,0,0,1,17,17Z"/></svg>"#
+        case .caretLeftBold:
+            #"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z"/></svg>"#
         case .checkBold:
             #"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></svg>"#
         case .checkCircleDuotone:

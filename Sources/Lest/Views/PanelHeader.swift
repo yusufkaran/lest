@@ -3,7 +3,7 @@ import SwiftUI
 struct PanelHeader: View {
     let model: AppModel
     let loginItem: LoginItem
-    @Binding var showsDone: Bool
+    let onShowCompleted: () -> Void
 
     private var summary: String {
         model.openCount == 0 ? "No open notes" : openNotesLabel(model.openCount)
@@ -23,7 +23,7 @@ struct PanelHeader: View {
             }
             .accessibilityElement(children: .combine)
             Spacer()
-            OptionsMenu(model: model, loginItem: loginItem, showsDone: $showsDone)
+            OptionsMenu(model: model, loginItem: loginItem, onShowCompleted: onShowCompleted)
         }
     }
 }

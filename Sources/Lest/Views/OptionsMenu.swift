@@ -3,11 +3,12 @@ import SwiftUI
 struct OptionsMenu: View {
     let model: AppModel
     @Bindable var loginItem: LoginItem
-    @Binding var showsDone: Bool
+    let onShowCompleted: () -> Void
 
     var body: some View {
         Menu {
-            Toggle("Show Completed", isOn: $showsDone)
+            Button("Completed Notes (\(model.doneCount))", action: onShowCompleted)
+                .disabled(model.doneCount == 0)
             Button("Clear Completed", action: model.clearDone)
                 .disabled(model.doneCount == 0)
             Divider()

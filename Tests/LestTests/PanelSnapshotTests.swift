@@ -12,10 +12,8 @@ private let snapshotDirectory = ProcessInfo.processInfo.environment["LEST_SNAPSH
 /// The panel only opens from a click on the menu bar, which a script cannot do without
 /// accessibility permission, so this is the way to look at a layout change:
 /// `make snapshot`, then open the images in `build/snapshots`.
-///
-/// Serialized because the "show done notes" setting is read from shared user defaults.
 @MainActor
-@Suite(.serialized, .enabled(if: snapshotDirectory != nil))
+@Suite(.enabled(if: snapshotDirectory != nil))
 struct PanelSnapshotTests {
     @Test func lightPanel() throws {
         try snapshot(named: "panel-light", appearance: .aqua, notes: Self.sampleNotes)
@@ -25,17 +23,28 @@ struct PanelSnapshotTests {
         try snapshot(named: "panel-dark", appearance: .darkAqua, notes: Self.sampleNotes)
     }
 
-    @Test func panelShowingDoneNotes() throws {
-        UserDefaults.standard.set(true, forKey: "showsDone")
-        defer { UserDefaults.standard.removeObject(forKey: "showsDone") }
-        try snapshot(named: "panel-done", appearance: .aqua, notes: Self.sampleNotes)
+    @Test func completedPage() throws {
+        try snapshot(named: "panel-completed", appearance: .aqua, notes: Self.sampleNotes, showsCompleted: true)
+    }
+
+    @Test func darkCompletedPage() throws {
+        try snapshot(named: "panel-completed-dark", appearance: .darkAqua, notes: Self.sampleNotes, showsCompleted: true)
+    }
+
+    @Test func emptyCompletedPage() throws {
+        try snapshot(named: "panel-completed-empty", appearance: .aqua, notes: [], showsCompleted: true)
     }
 
     @Test func emptyPanel() throws {
         try snapshot(named: "panel-empty", appearance: .aqua, notes: [])
     }
 
-    private func snapshot(named name: String, appearance: NSAppearance.Name, notes: [Note]) throws {
+    private func snapshot(
+        named name: String,
+        appearance: NSAppearance.Name,
+        notes: [Note],
+        showsCompleted: Bool = false
+    ) throws {
         let directory = try #require(snapshotDirectory)
         let storeDirectory = URL.temporaryDirectory.appending(path: "lest-snapshot-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: storeDirectory) }
@@ -45,7 +54,9 @@ struct PanelSnapshotTests {
         // The real panel blurs whatever is behind its window, which an off-screen drawing cannot
         // show, so a plain window color stands in for the frosted backdrop.
         let shape = RoundedRectangle(cornerRadius: Theme.panelRadius, style: .circular)
-        let panel = NotesPanel(model: AppModel(store: store), loginItem: LoginItem(), presentation: PanelPresentation())
+        let presentation = PanelPresentation()
+        presentation.showsCompleted = showsCompleted
+        let panel = NotesPanel(model: AppModel(store: store), loginItem: LoginItem(), presentation: presentation)
             .background(Color(nsColor: .windowBackgroundColor), in: shape)
             .overlay { shape.strokeBorder(.separator) }
         let hostingView = NSHostingView(rootView: panel)
@@ -86,6 +97,19 @@ struct PanelSnapshotTests {
                 project: "landing-page",
                 createdAt: .now.addingTimeInterval(-4 * 24 * hour),
                 doneAt: .now
+            ),
+            Note(
+                text: "Rename the staging bucket",
+                project: "Atlas",
+                path: "/tmp/Atlas",
+                createdAt: .now.addingTimeInterval(-5 * 24 * hour),
+                doneAt: .now.addingTimeInterval(-26 * hour)
+            ),
+            Note(
+                text: "Write the changelog for 2.1",
+                project: Note.defaultProject,
+                createdAt: .now.addingTimeInterval(-2 * 24 * hour),
+                doneAt: .now.addingTimeInterval(-2 * hour)
             ),
             Note(
                 text: "Verify the Stripe webhook signature; unsigned requests are accepted for now",
